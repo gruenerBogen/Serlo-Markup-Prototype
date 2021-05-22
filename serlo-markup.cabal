@@ -1,0 +1,25 @@
+cabal-version:       >=1.10
+
+name:                serlo-markup
+version:             0.1.0.0
+-- synopsis:
+-- description:
+bug-reports:         https://github.com/gruenerBogen/Serlo-Markup-Prototype/issues
+license:             BSD3
+license-file:        LICENSE
+author:              Lukas
+maintainer:          lukas.b@mailbox.org
+build-type:          Simple
+extra-source-files:  CHANGELOG.md, README.adoc
+
+library
+  hs-source-dirs: src
+  exposed-modules:
+    Serlo.Model
+    Serlo.Text
+  build-depends:
+    base                 >= 4.14 && < 4.15,
+    aeson                >= 1.5 && < 1.6,
+    text                 >= 1.2.3.0 && < 1.3,
+    unordered-containers >= 0.2.13.0 && < 0.3
+  default-language: Haskell2010
