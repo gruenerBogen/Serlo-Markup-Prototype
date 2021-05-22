@@ -5,7 +5,7 @@ module SerloSourceParse
 
 import Text.ParserCombinators.Parsec
 
-import SerloModel
+import Serlo.Model
 
 fromString = undefined
 

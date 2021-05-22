@@ -10,7 +10,7 @@ import Text.Read (readMaybe)
 import qualified Data.String as S
 import qualified Data.Vector as V
 
-import SerloModel
+import Serlo.Model
 
 instance ToJSON SerloPlugin where
   toJSON = pluginToJSON

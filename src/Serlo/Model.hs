@@ -1,11 +1,11 @@
-module SerloModel
+module Serlo.Model
   (
     SerloPlugin(..)
   , SerloContent
   , name
   ) where
 
-import SerloText
+import Serlo.Text
 
 data SerloPlugin = RichText [SerloText] -- contnet
                  | Image String Int -- src maxWitdh

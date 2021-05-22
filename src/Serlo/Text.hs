@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module SerloText
+module Serlo.Text
   (
     SerloText
   ) where

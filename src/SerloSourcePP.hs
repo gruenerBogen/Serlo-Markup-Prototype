@@ -6,7 +6,7 @@ module SerloSourcePP
 import Text.PrettyPrint.HughesPJ hiding ((<>))
 import Data.List (intersperse)
 
-import SerloModel
+import Serlo.Model
 
 pp_serlo :: SerloContent -> Doc
 pp_serlo c = mconcat $ intersperse (text "\n\n") $ map pp_plugin c
