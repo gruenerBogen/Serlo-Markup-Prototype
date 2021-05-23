@@ -42,14 +42,28 @@ The text plugin itself is complicated enough to deserve its own treatment: The
 text plugin itself has a substructure which denotes the text
 formatting. Currently supported are
 
-* Bold/Italic text
-* Headings
+* bold/italic text
+* headings
+* normal text
+* paragraphs
+* maths
+* unordered lists
+
+=== Plugins supported by the Markup translator
+Current work focuses on the conversion from the internal model to the markup
+language. The only currently supported plugin is the text plugin which only
+works in the direction to the markup language. In that plugin, the supported
+parts are
+
+* bold/italic text
+* headings
 * normal text
 * paragraphs
 * maths
 
-=== Plugins supported by the Markup translator
-Currently there almost no working code for the markup converter.
+Escaping is still missing. Hence some contents in the internal model can
+result in illegal markup or an inappropriate result. This is for example the
+case for desired multiple spaces.
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
