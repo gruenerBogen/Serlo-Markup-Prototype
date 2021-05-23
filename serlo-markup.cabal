@@ -21,6 +21,9 @@ library
     Serlo.Model.ToJSON
     Serlo.Model.FromJSON
     Serlo.Internal.Model
+    Serlo.Internal.Text
+    Serlo.Text.FromJSON
+    Serlo.Text.ToJSON
   build-depends:
     base                 >= 4.14 && < 4.15,
     aeson                >= 1.5 && < 1.6,
