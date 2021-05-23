@@ -1,3 +1,63 @@
 = Serlo-Markup-Prototype
 
 A prototype for a markup language on https://serlo.org[serlo.org].
+
+== Idea
+In order to develop a markup language for https://serlo.org[serlo.org], we
+construct a prototype converter between the https://api.serlo.org[Serlo API]
+and the newly developed markup language. This allows for testing the markup
+language with real contents by converting them back and forth. The conversion
+from markup language to the API will be used to display the edited contents.
+
+To implement these goals, the following tools will be written: A library which
+handles the conversion and a few command line tools for interfacing the
+library.
+
+== State of Implementation
+The conversion is done in a two-step process. First there is a conversion from
+the JSON created by the Serlo API to an internal representation. In a second
+step the internal representation is converted to the markup language. For the
+conversion in the other direction, both steps get reversed. Hence the
+implemtation consists of two parts: A translation between the Serlo API and
+the internal model and a translation between the internal model and the markup
+language. Graphically:
+
+[source]
+Serlo API JSON <--> internal model <--> markup language
+
+The Serlo Editor constists of a collection of plugins. These plugins each have
+a particular state, which determines their content. To track progress it is
+therefore useful to collect the plugins which each translator can deal with.
+
+=== Plugins supported by the Serlo API translator
+The following plugins can be handled by converter between JSON and internal
+model:
+
+* text (partially, for details see below)
+* injection (only from JSON to internal model)
+* rows
+* spoiler
+
+The text plugin itself is complicated enough to deserve its own treatment: The
+text plugin itself has a substructure which denotes the text
+formatting. Currently supported are
+
+* Bold/Italic text
+* Headings
+* normal text
+* paragraphs
+* maths
+
+=== Plugins supported by the Markup translator
+Currently there almost no working code for the markup converter.
+
+== Caveats
+The Serlo editor encoding is not one of the best documented pieces of
+software. Nevertheless the source code gives understandable state descriptions
+for some plugins. Sadly, the text plugin, which is the bread and butter plugin
+for article creation, is so complicated, that the editor code itself is not a
+good documentation for the underlying data structure. Hence the API-side
+implementation of the text plugin is highly explorative.
+
+Similar caveats concern the overall code quality. It is explorative code which
+probably ignores a bunch of best practices.
