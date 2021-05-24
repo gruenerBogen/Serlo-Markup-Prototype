@@ -18,6 +18,7 @@ library
     Serlo.Model
     Serlo.Text
     Serlo.Markup
+    Text.AsciiDoc.Encode
   other-modules:
     Serlo.Model.ToJSON
     Serlo.Model.FromJSON
