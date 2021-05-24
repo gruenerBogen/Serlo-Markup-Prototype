@@ -17,7 +17,6 @@ library
   exposed-modules:
     Serlo.Model
     Serlo.Text
-    Serlo.Markup
     Text.AsciiDoc.Encode
     Text.AsciiDoc.Encode.Text
   other-modules:
@@ -27,9 +26,6 @@ library
     Serlo.Internal.Text
     Serlo.Text.FromJSON
     Serlo.Text.ToJSON
-    Serlo.Markup.ToMarkup
-    Serlo.Markup.ModelToMarkup
-    Serlo.Markup.TextToMarkup
     Text.AsciiDoc.Types.Generic
     Text.AsciiDoc.Types.Header
     Text.AsciiDoc.Types.Text

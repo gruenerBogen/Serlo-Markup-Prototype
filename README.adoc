@@ -5,7 +5,7 @@ A prototype for a markup language on https://serlo.org[serlo.org].
 == Idea
 In order to develop a markup language for https://serlo.org[serlo.org], we
 construct a prototype converter between the https://api.serlo.org[Serlo API]
-and the newly developed markup language. This allows for testing the markup
+and the markup language. This allows for testing the markup
 language with real contents by converting them back and forth. The conversion
 from markup language to the API will be used to display the edited contents.
 
@@ -13,25 +13,32 @@ To implement these goals, the following tools will be written: A library which
 handles the conversion and a few command line tools for interfacing the
 library.
 
+Currently, the idea is to use https://asciidoctor.org[AsciiDoc] as the
+underlying markup language. This is done for two main reasons: Firstly it is a
+language which naturally allows for content type extensions. This allows the
+vanilla use of an already defined markup language. Secondly this vanilla use
+of a markup language gives rise to the hope that some (external) editors
+already provide syntax highlighting for the markup language.
+
 == State of Implementation
-The conversion is done in a two-step process. First there is a conversion from
-the JSON created by the Serlo API to an internal representation. In a second
-step the internal representation is converted to the markup language. For the
-conversion in the other direction, both steps get reversed. Hence the
-implemtation consists of two parts: A translation between the Serlo API and
-the internal model and a translation between the internal model and the markup
-language. Graphically:
+The conversion is done in a three step process: First there is a conversion from
+the JSON created by the Serlo API to an internal representation for the Serlo
+content. In the second step this internal representation is converted to an
+internal representation of an AsciiDoc document. The third step consists of
+converting the internal AsciiDoc representation to the actual AsciiDoc
+document. For the conversion in the other direction, both steps get
+reversed. Hence the implemtation consists of two parts: A translation between
+the Serlo API and the internal model and a translation between the internal
+model and the markup language. Graphically:
 
 [source]
-Serlo API JSON <--> internal model <--> markup language
+Serlo API JSON <--> internal Serlo content model <--> internal AsciiDoc model <--> AsciiDoc
 
+=== Translation between API JSON and internal model
 The Serlo Editor constists of a collection of plugins. These plugins each have
 a particular state, which determines their content. To track progress it is
-therefore useful to collect the plugins which each translator can deal with.
-
-=== Plugins supported by the Serlo API translator
-The following plugins can be handled by converter between JSON and internal
-model:
+therefore useful to collect the plugins with which the translator can deal
+with. These are:
 
 * text (partially, for details see below)
 * injection (only from JSON to internal model)
@@ -49,21 +56,23 @@ formatting. Currently supported are
 * maths
 * unordered lists
 
-=== Plugins supported by the Markup translator
-Current work focuses on the conversion from the internal model to the markup
-language. The only currently supported plugin is the text plugin which only
-works in the direction to the markup language. In that plugin, the supported
-parts are
+=== AsciiDoc parsing and printing
+The internal model to represent an AsciiDoc document is still under heavy
+development. The only working parts are in the area of printing, that is
+converting the internal representation to the actual document. There the
+following parts are working:
 
-* bold/italic text
-* headings
-* normal text
-* paragraphs
-* maths
+* document header
+* paragraph content
 
-Escaping is still missing. Hence some contents in the internal model can
-result in illegal markup or an inappropriate result. This is for example the
-case for desired multiple spaces.
+The printable parts of the paragraph content are
+
+* plain text
+* bold/italic/highlighted text
+* subscript and superscript
+
+Some representation for maths contents does exist, but it cant be rendered
+right now because it is unclear how to render it.
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
