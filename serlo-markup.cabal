@@ -28,6 +28,8 @@ library
     Serlo.Markup.ToMarkup
     Serlo.Markup.ModelToMarkup
     Serlo.Markup.TextToMarkup
+    Text.AsciiDoc.Types.Generic
+    Text.AsciiDoc.Types.Header
   build-depends:
     base                 >= 4.14 && < 4.15,
     aeson                >= 1.5 && < 1.6,
