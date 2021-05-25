@@ -29,7 +29,9 @@ library
     Text.AsciiDoc.Types.Generic
     Text.AsciiDoc.Types.Header
     Text.AsciiDoc.Types.Text
+    Text.AsciiDoc.Parser.Generic
     Text.AsciiDoc.Parser.Header
+    Text.AsciiDoc.Parser.Text
   build-depends:
     base                 >= 4.14 && < 4.15,
     aeson                >= 1.5 && < 1.6,

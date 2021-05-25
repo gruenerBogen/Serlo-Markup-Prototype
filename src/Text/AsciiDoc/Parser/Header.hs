@@ -7,6 +7,7 @@ import Text.Parsec.String (Parser)
 import Text.Parsec.Char
 
 import Text.AsciiDoc.Types.Header
+import Text.AsciiDoc.Parser.Generic (skipWhitespace)
 
 p_header :: Parser Header
 p_header = Header <$> optionMaybeTry p_title
@@ -59,4 +60,3 @@ p_attributeName = do
 line = many (noneOf "\n\r") <* endOfLine
 
 optionMaybeTry = optionMaybe . try
-skipWhitespace = skipMany $ oneOf " \t"

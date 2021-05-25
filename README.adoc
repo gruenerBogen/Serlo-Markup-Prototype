@@ -75,7 +75,12 @@ The printable parts of the paragraph content are
 Some representation for maths contents does exist, but it cant be rendered
 right now because it is unclear how to render it.
 
-The parser is currently only capable of parsing the header.
+The parser is currently only capable of parsing the header and some features
+of ordinary paragraphs. These are
+
+* Plain text (anything which is never a special char)
+* Hard line breaks
+* End of a paragraph
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
