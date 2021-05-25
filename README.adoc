@@ -58,12 +58,13 @@ formatting. Currently supported are
 
 === AsciiDoc parsing and printing
 The internal model to represent an AsciiDoc document is still under heavy
-development. The only working parts are in the area of printing, that is
-converting the internal representation to the actual document. There the
-following parts are working:
+development. Regarding the conversion, there are two directions to cover: The
+printing, that is converting the internal model to an actual document, and the
+parsing, that is converting the actual document to the internal model. On the
+printing side, the following parts are working:
 
 * document header
-* paragraph content
+* paragraph content (at least some parts)
 
 The printable parts of the paragraph content are
 
@@ -73,6 +74,8 @@ The printable parts of the paragraph content are
 
 Some representation for maths contents does exist, but it cant be rendered
 right now because it is unclear how to render it.
+
+The parser is currently only capable of parsing the header.
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
