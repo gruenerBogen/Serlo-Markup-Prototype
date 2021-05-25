@@ -12,9 +12,6 @@ encodeFormattedSegment (FormattedSegment fs s) = foldr applyFormatting (encodeCo
 
 encodeContent :: Content -> Doc
 encodeContent (Text s) = text $ escapeText s
-encodeContent (Link t n) = text "link:" <> text t <> char '[' <> encodeFormattedText n <> char ']'
--- It is currently unclear, which notation is the best way to output LaTeX code.
-encodeContent (Math _) = undefined
 
 escapeText :: String -> String
 --escapeText = replace "\n" " +\n"

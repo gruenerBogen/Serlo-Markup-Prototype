@@ -8,12 +8,14 @@ data FormattedSegment = FormattedSegment [Formatting] Content
                       deriving (Eq, Show)
 
 data Content = Text String
-             | Link Target Name
-             | Math String
+             | InlineMacroCall Name Target PositionalAttributes NamedAttributes
              deriving (Eq, Show)
 
-type Name = FormattedText
+type Name = String
 type Target = String
+
+type PositionalAttributes = [String]
+type NamedAttributes = [(String, String)]
 
 data Formatting = Bold
                 | Italic
