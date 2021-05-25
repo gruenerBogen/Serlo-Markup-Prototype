@@ -4,7 +4,7 @@ import Text.AsciiDoc.Types.Generic (Attributes)
 
 type FormattedText = [FormattedSegment]
 
-data FormattedSegment = FormattedSegment Content [Formatting]
+data FormattedSegment = FormattedSegment [Formatting] Content
                       deriving (Eq, Show)
 
 data Content = Text String

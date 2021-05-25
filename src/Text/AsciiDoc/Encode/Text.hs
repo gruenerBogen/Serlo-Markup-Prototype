@@ -8,7 +8,7 @@ encodeFormattedText :: FormattedText -> Doc
 encodeFormattedText = hcat . map encodeFormattedSegment
 
 encodeFormattedSegment :: FormattedSegment -> Doc
-encodeFormattedSegment (FormattedSegment s fs) = foldr applyFormatting (encodeContent s) fs
+encodeFormattedSegment (FormattedSegment fs s) = foldr applyFormatting (encodeContent s) fs
 
 encodeContent :: Content -> Doc
 encodeContent (Text s) = text $ escapeText s
