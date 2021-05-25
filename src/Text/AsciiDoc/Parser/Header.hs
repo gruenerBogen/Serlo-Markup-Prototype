@@ -1,13 +1,11 @@
 module Text.AsciiDoc.Parser.Header where
 
-import Data.Char (toLower)
-
 import Text.Parsec
 import Text.Parsec.String (Parser)
 import Text.Parsec.Char
 
 import Text.AsciiDoc.Types.Header
-import Text.AsciiDoc.Parser.Generic (skipWhitespace)
+import Text.AsciiDoc.Parser.Generic (skipWhitespace, p_attributeName)
 
 p_header :: Parser Header
 p_header = Header <$> optionMaybeTry p_title
@@ -49,13 +47,6 @@ p_mail = char '<' *> many (noneOf ">") <* char '>'
 -- Multiline Attribute lists are still missing
 p_attribute :: Parser (String, String)
 p_attribute = ((,)) <$> (char ':' *> p_attributeName <* char ':' <* many1 space) <*> line
-
-p_attributeName :: Parser String
-p_attributeName = do
-    f <- oneOf wordChar
-    r <- many (oneOf wordChar <|> char '-')
-    return $ map toLower (f:r)
-  where wordChar = ['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ "_"
 
 line = many (noneOf "\n\r") <* endOfLine
 

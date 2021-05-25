@@ -81,6 +81,7 @@ of ordinary paragraphs. These are
 * Plain text (anything which is never a special char)
 * Hard line breaks
 * End of a paragraph
+* Macro calls
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
