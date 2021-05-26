@@ -11,43 +11,48 @@ import Text.AsciiDoc.Parser.Generic (skipWhitespace, p_attributeName)
 
 delimiter = "*_\\#~^"
 
-constrainedDelimiters = [ ("*", Bold)
-                        , ("_", Italic)
+constrainedDelimiters = [ (Bold, "*")
+                        , (Italic, "_")
                         ]
 
-unconstrainedDelimiters = [ ("**", Bold)
-                          , ("__", Italic)
+unconstrainedDelimiters = [ (Bold, "**")
+                          , (Italic, "__")
+                          , (Monospace, "``")
+                          , (Highlight, "##")
+                          , (Subscript, "~")
+                          , (Superscript, "^")
                           ]
 
 p_text :: Parser FormattedText
-p_text = skipWhitespace *> p_textMiddle
+p_text = skipWhitespace *> p_formatted [] (fail "") p_endOfBlock
 
-p_textMiddle :: Parser FormattedText
-p_textMiddle = (FormattedSegment [] <$> try p_macroCall) <:> p_textMiddle
-           <|> (FormattedSegment [] <$> Text <$> many1 p_unspecialChar) <:> p_textMiddle
-           <|> try (p_endOfBlock *> return [])
-           <|> try (FormattedSegment [] <$> Text <$> p_hardLineBreak) <:> p_textMiddle
-           <|> (FormattedSegment [] <$> Text <$> p_whitespace) <:> p_textMiddle
-           <|> string "**" *> p_bold <++> p_textMiddle
-
-p_bold = p_formatted [Bold] (string "**")
-
-p_formatted :: [Formatting] -> Parser a -> Parser FormattedText
-p_formatted f d = p_formattedContent f d <* d
-
+p_formatted :: [Formatting] -> Parser String -> Parser String -> Parser FormattedText
+p_formatted fs d d' = p_formattedContent fs (d <|> d') <* d'
 
 -- The parser-argument parses the end-delimiter
-p_formattedContent :: [Formatting] -> Parser a -> Parser FormattedText
-p_formattedContent f d = (FormattedSegment f <$> try p_macroCall) <:> p_formattedContent f d
-                     <|> try (p_endOfBlock *> return [])
-                     <|> try (lookAhead $ d) *> return [] -- End of Segment
-                     <|> try (FormattedSegment f <$> Text <$> choice
+p_formattedContent :: [Formatting] -> Parser String -> Parser FormattedText
+p_formattedContent fs d = (FormattedSegment fs <$> try p_macroCall) <:> p_formattedContent fs d
+                      <|> try (lookAhead $ d) *> return [] -- End of Segment
+                      <|> choice (p_unconstraineds fs d) <++> p_formattedContent fs d
+                      <|> try (FormattedSegment fs <$> Text <$> choice
                                [ many1 p_unspecialChar
                                , try p_hardLineBreak
                                , p_whitespace
                                , count 1 anyChar
-                               ]) <:> p_formattedContent f d
+                               ]) <:> p_formattedContent fs d
 
+p_unconstrainedDelim :: String -> Parser String
+p_unconstrainedDelim s = string s *> return ""
+
+p_unconstrained :: [Formatting] -> Parser String -> (Formatting, String) -> Parser FormattedText
+p_unconstrained fs d (f,s) = let d' = p_unconstrainedDelim s
+                             in try (d' *> p_formatted (f:fs) d d')
+
+p_unconstraineds :: [Formatting] -> Parser String -> [Parser FormattedText]
+p_unconstraineds fs d = map (p_unconstrained fs d) $ filter (not . (`elem` fs) . fst) unconstrainedDelimiters
+
+--p_constrainedOpening :: String -> Parser String
+--p_constrainedOpening s = count 1 (satisfy (not . isAlphaNum)) <* string s <* lookAhead alphaNum
 
 p_unspecialChar = noneOf $ delimiter ++ "\n\r \t"
 p_whitespace = many1 space *> return " "
@@ -58,9 +63,9 @@ p_hardLineBreak = many1 (oneOf " \t")
                *> many (oneOf " \t")
                *> return "\n"
 
-p_endOfBlock :: Parser Char
-p_endOfBlock = skipWhitespace *> eof *> return '\n'
-           <|> skipWhitespace *> endOfLine *> (eof <|> (skipWhitespace <* endOfLine)) *> return '\n'
+p_endOfBlock :: Parser String
+p_endOfBlock = skipWhitespace *> eof *> return "\n"
+           <|> skipWhitespace *> endOfLine *> (eof <|> (skipWhitespace <* endOfLine)) *> return "\n"
 
 p_macroCall :: Parser Content
 p_macroCall = do
@@ -96,11 +101,3 @@ p_quotedAttributeValue = many1 $ noneOf "\"\\"
 
 (<:>) = liftM2 (:)
 (<++>) = liftM2 (++)
-
-p_boldUnconstrained :: Parser String
-p_boldUnconstrained = between (string "**") (string "**") $ many p_boldContent
-
-p_boldContent :: Parser Char
-p_boldContent = noneOf "*\n\r"
-            <|> try (char '*' <* lookAhead (noneOf "*"))
-            <|> try (endOfLine <* lookAhead (noneOf "\r\n"))

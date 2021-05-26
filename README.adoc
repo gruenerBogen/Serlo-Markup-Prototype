@@ -82,7 +82,11 @@ of ordinary paragraphs. These are
 * Hard line breaks
 * End of a paragraph
 * Macro calls
-* unconstrained bold text
+* unconstrained bold/italic/monospace/highlighted text
+* sub- and superscript text
+
+The unconstrained bold/italic/monospace implementation deviates from the
+specification by allowing stacking the formatting marks in any order.
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
