@@ -1,4 +1,7 @@
-module Text.AsciiDoc.Parser.Text () where
+module Text.AsciiDoc.Parser.Text
+  (
+    p_text
+  ) where
 
 import Control.Monad (liftM2)
 
@@ -30,7 +33,7 @@ macroDelimiters = [ ("\\$", "\\$", \s -> InlineMacroCall "asciimath" "" [] [("sr
                   ]
 
 p_text :: Parser FormattedText
-p_text = skipWhitespace *> p_formatted [] (fail "") p_endOfBlock
+p_text = reduce <$> (skipWhitespace *> p_formatted [] (fail "") p_endOfBlock)
 
 p_formatted :: [Formatting] -> Parser String -> Parser String -> Parser FormattedText
 p_formatted fs d d' = p_formattedContent fs (d <|> d') <* d'
@@ -114,3 +117,12 @@ p_delimitedMacroCalls = map (try . p_delimitedMacroCall) macroDelimiters
 
 (<:>) = liftM2 (:)
 (<++>) = liftM2 (++)
+
+reduce :: FormattedText -> FormattedText
+reduce = foldr reducedPrepend []
+
+reducedPrepend :: FormattedSegment -> FormattedText -> FormattedText
+reducedPrepend a@(FormattedSegment fs (Text s)) b@((FormattedSegment fs' (Text s')):ts)
+  | fs == fs' = (FormattedSegment fs' (Text (s++s'))):ts
+  | otherwise = a:b
+reducedPrepend a b = a:b
