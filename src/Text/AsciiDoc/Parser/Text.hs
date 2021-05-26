@@ -11,6 +11,14 @@ import Text.AsciiDoc.Parser.Generic (skipWhitespace, p_attributeName)
 
 delimiter = "*_\\#~^"
 
+constrainedDelimiters = [ ("*", Bold)
+                        , ("_", Italic)
+                        ]
+
+unconstrainedDelimiters = [ ("**", Bold)
+                          , ("__", Italic)
+                          ]
+
 p_text :: Parser FormattedText
 p_text = skipWhitespace *> p_textMiddle
 
@@ -20,6 +28,26 @@ p_textMiddle = (FormattedSegment [] <$> try p_macroCall) <:> p_textMiddle
            <|> try (p_endOfBlock *> return [])
            <|> try (FormattedSegment [] <$> Text <$> p_hardLineBreak) <:> p_textMiddle
            <|> (FormattedSegment [] <$> Text <$> p_whitespace) <:> p_textMiddle
+           <|> string "**" *> p_bold <++> p_textMiddle
+
+p_bold = p_formatted [Bold] (string "**")
+
+p_formatted :: [Formatting] -> Parser a -> Parser FormattedText
+p_formatted f d = p_formattedContent f d <* d
+
+
+-- The parser-argument parses the end-delimiter
+p_formattedContent :: [Formatting] -> Parser a -> Parser FormattedText
+p_formattedContent f d = (FormattedSegment f <$> try p_macroCall) <:> p_formattedContent f d
+                     <|> try (p_endOfBlock *> return [])
+                     <|> try (lookAhead $ d) *> return [] -- End of Segment
+                     <|> try (FormattedSegment f <$> Text <$> choice
+                               [ many1 p_unspecialChar
+                               , try p_hardLineBreak
+                               , p_whitespace
+                               , count 1 anyChar
+                               ]) <:> p_formattedContent f d
+
 
 p_unspecialChar = noneOf $ delimiter ++ "\n\r \t"
 p_whitespace = many1 space *> return " "
@@ -55,7 +83,7 @@ p_namedAttrs = p_namedAttr `sepBy` (skipWhitespace *> char ',')
 
 p_namedAttr :: Parser (String, String)
 p_namedAttr = ((,)) <$> (skipWhitespace *> p_attributeName)
-                   <*> (skipWhitespace *> char '=' *> skipWhitespace *> p_attributeValue)
+                    <*> (skipWhitespace *> char '=' *> skipWhitespace *> p_attributeValue)
 
 p_attributeValue :: Parser String
 p_attributeValue = between (char '"') (char '"') p_quotedAttributeValue
@@ -67,6 +95,7 @@ p_quotedAttributeValue = many1 $ noneOf "\"\\"
                              <|> string "\\\\" *> return '\\'
 
 (<:>) = liftM2 (:)
+(<++>) = liftM2 (++)
 
 p_boldUnconstrained :: Parser String
 p_boldUnconstrained = between (string "**") (string "**") $ many p_boldContent

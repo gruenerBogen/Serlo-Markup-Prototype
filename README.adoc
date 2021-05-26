@@ -82,6 +82,7 @@ of ordinary paragraphs. These are
 * Hard line breaks
 * End of a paragraph
 * Macro calls
+* unconstrained bold text
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
