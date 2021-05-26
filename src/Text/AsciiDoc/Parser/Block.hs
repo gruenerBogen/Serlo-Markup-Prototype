@@ -1,4 +1,7 @@
-module Text.AsciiDoc.Parser.Block () where
+module Text.AsciiDoc.Parser.Block
+  (
+    p_block
+  ) where
 
 import Text.Parsec
 import Text.Parsec.Char

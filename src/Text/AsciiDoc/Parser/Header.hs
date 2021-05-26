@@ -1,4 +1,7 @@
-module Text.AsciiDoc.Parser.Header where
+module Text.AsciiDoc.Parser.Header
+  (
+    p_header
+  ) where
 
 import Text.Parsec
 import Text.Parsec.String (Parser)
