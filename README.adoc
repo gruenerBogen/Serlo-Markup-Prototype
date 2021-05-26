@@ -75,13 +75,19 @@ The printable parts of the paragraph content are
 Some representation for maths contents does exist, but it cant be rendered
 right now because it is unclear how to render it.
 
-The parser is currently only capable of parsing the header and some features
-of ordinary paragraphs. These are
+The parser is currently only capable of parsing the header and some
+blocks. These are
 
-* Plain text (anything which is never a special char)
-* Hard line breaks
-* End of a paragraph
-* Macro calls
+* section
+* paragraph (for details see below)
+
+Not all syntax elements of a paragraph are parseable right now. Currently the
+parser recognises the following syntax elements inside a paragraph
+
+* plain text (anything which is never a special char)
+* hard line breaks
+* end of a paragraph
+* macro calls
 * unconstrained bold/italic/monospace/highlighted text
 * sub- and superscript text
 * inline maths (asciimath and latex)
