@@ -23,6 +23,12 @@ unconstrainedDelimiters = [ (Bold, "**")
                           , (Superscript, "^")
                           ]
 
+-- start, end, function to convert content to macro call
+macroDelimiters :: [(String, String, String -> Content)]
+macroDelimiters = [ ("\\$", "\\$", \s -> InlineMacroCall "asciimath" "" [] [("src", s)])
+                  , ("\\(", "\\)", \s -> InlineMacroCall "latexmath" "" [] [("src", s)])
+                  ]
+
 p_text :: Parser FormattedText
 p_text = skipWhitespace *> p_formatted [] (fail "") p_endOfBlock
 
@@ -34,6 +40,7 @@ p_formattedContent :: [Formatting] -> Parser String -> Parser FormattedText
 p_formattedContent fs d = (FormattedSegment fs <$> try p_macroCall) <:> p_formattedContent fs d
                       <|> try (lookAhead $ d) *> return [] -- End of Segment
                       <|> choice (p_unconstraineds fs d) <++> p_formattedContent fs d
+                      <|> (FormattedSegment fs <$> choice p_delimitedMacroCalls) <:> p_formattedContent fs d
                       <|> try (FormattedSegment fs <$> Text <$> choice
                                [ many1 p_unspecialChar
                                , try p_hardLineBreak
@@ -98,6 +105,12 @@ p_attributeValue = between (char '"') (char '"') p_quotedAttributeValue
 p_quotedAttributeValue = many1 $ noneOf "\"\\"
                              <|> string "\\\"" *> return '"'
                              <|> string "\\\\" *> return '\\'
+
+p_delimitedMacroCall :: (String, String, String -> Content) -> Parser Content
+p_delimitedMacroCall (start, end, f) = f <$> (string start *> manyTill anyChar (try $ string end))
+
+p_delimitedMacroCalls :: [Parser Content]
+p_delimitedMacroCalls = map (try . p_delimitedMacroCall) macroDelimiters
 
 (<:>) = liftM2 (:)
 (<++>) = liftM2 (++)

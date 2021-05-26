@@ -84,6 +84,7 @@ of ordinary paragraphs. These are
 * Macro calls
 * unconstrained bold/italic/monospace/highlighted text
 * sub- and superscript text
+* inline maths (asciimath and latex)
 
 The unconstrained bold/italic/monospace implementation deviates from the
 specification by allowing stacking the formatting marks in any order.
