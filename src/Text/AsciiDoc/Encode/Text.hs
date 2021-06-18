@@ -1,4 +1,7 @@
-module Text.AsciiDoc.Encode.Text where
+module Text.AsciiDoc.Encode.Text
+  (
+    encodeFormattedText
+  ) where
 
 import Text.PrettyPrint.HughesPJ hiding ((<>))
 
@@ -12,6 +15,21 @@ encodeFormattedSegment (FormattedSegment fs s) = foldr applyFormatting (encodeCo
 
 encodeContent :: Content -> Doc
 encodeContent (Text s) = text $ escapeText s
+encodeContent (InlineMacroCall n t pattrs nattrs) =
+  case n of
+    "latexmath" -> text "\\(" <> text (maybe "" id $ lookup "src" nattrs) <> text "\\)"
+    "asciimath" -> enclose (text "\\$") $ text $ maybe "" id $ lookup "src" nattrs
+    _           -> text n <> char ':' <> text t <> char '[' <> encodeAttrs (pattrs ++ map encodeNamedAttr nattrs) <> char ']'
+
+encodeAttrs :: [String] -> Doc
+encodeAttrs = hsep . punctuate (char ',') . map (text . escapeAttr)
+
+encodeNamedAttr :: (String, String) -> String
+encodeNamedAttr (k,v) =  k ++ "=" ++ escapeAttr v
+
+-- TODO: Handle case when quotes are needed
+escapeAttr :: String -> String
+escapeAttr = id
 
 escapeText :: String -> String
 --escapeText = replace "\n" " +\n"
@@ -24,6 +42,6 @@ applyFormatting :: Formatting -> Doc -> Doc
 applyFormatting Bold = enclose $ text "**"
 applyFormatting Italic = enclose $ text "__"
 applyFormatting Monospace = enclose $ text "``"
-applyFormatting Highlight = enclose $ char '#'
+applyFormatting Highlight = enclose $ text "##"
 applyFormatting Subscript = enclose $ char '~'
 applyFormatting Superscript = enclose $ char '^'
