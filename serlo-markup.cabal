@@ -17,6 +17,7 @@ library
   exposed-modules:
     Serlo.Model
     Serlo.Text
+    Serlo.Encode
     Text.AsciiDoc.Encode
     Text.AsciiDoc.Types
     Text.AsciiDoc.Parser

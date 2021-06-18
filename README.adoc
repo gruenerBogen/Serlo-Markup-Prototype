@@ -71,6 +71,8 @@ The printable parts of the paragraph content are
 * plain text
 * bold/italic/highlighted text
 * subscript and superscript
+* maths
+* inline macro calls
 
 Some representation for maths contents does exist, but it cant be rendered
 right now because it is unclear how to render it.
@@ -94,6 +96,20 @@ parser recognises the following syntax elements inside a paragraph
 
 The unconstrained bold/italic/monospace implementation deviates from the
 specification by allowing stacking the formatting marks in any order.
+
+=== Mapping between the internal models
+There need to be two conversions for the internal model. Right now, there is a
+partial implementation to convert the Serlo internal model to the AsciiDoc
+internal model. In that, the following can be converted to AsciiDoc
+
+* Rows
+* Paragraphs (partially, see below)
+
+For paragraphs, the following parts can be converted
+
+* plain text
+* bold/italic text
+* maths
 
 == Caveats
 The Serlo editor encoding is not one of the best documented pieces of
