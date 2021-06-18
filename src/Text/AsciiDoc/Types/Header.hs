@@ -9,10 +9,10 @@ data Header = Header (Maybe Title) (Maybe AuthorRevision) Attributes
 data AuthorRevision = AuthorRevision [Author] (Maybe Revision)
                      deriving (Eq, Show)
 
-data Author = Author Name (Maybe Mail)
+data Author = Author AuthorName (Maybe Mail)
             deriving (Eq, Show)
 
-type Name = String
+type AuthorName = String
 type Mail = String
 
 data Revision = Revision RevNr (Maybe RevDate) (Maybe RevRemark)
