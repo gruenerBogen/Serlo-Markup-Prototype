@@ -20,6 +20,12 @@ vanilla use of an already defined markup language. Secondly this vanilla use
 of a markup language gives rise to the hope that some (external) editors
 already provide syntax highlighting for the markup language.
 
+== Executables
+Using the command line, one can convert an article from serlo.org to
+AsciiDoc via the executable `serlo2adoc`.  You can find a manpage for it int
+the folder link:tree/main/doc/[`doc`].  You can use cabal to build and install
+the library and executable.
+
 == State of Implementation
 The conversion is done in a three step process: First there is a conversion from
 the JSON created by the Serlo API to an internal representation for the Serlo
