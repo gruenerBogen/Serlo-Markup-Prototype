@@ -6,8 +6,7 @@ import Data.Aeson.Types (Parser)
 
 import qualified Data.Vector as V
 
-import Serlo.Internal.Model (SerloPlugin(..))
-import Serlo.Model (name)
+import Serlo.Internal.Model (SerloPlugin(..), name)
 
 instance ToJSON SerloPlugin where
   toJSON = pluginToJSON
