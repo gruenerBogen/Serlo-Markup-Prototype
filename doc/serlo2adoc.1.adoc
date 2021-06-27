@@ -13,8 +13,8 @@ serlo2adoc - convert serlo article content to AsciiDoc
 
 == Description
 Convert the JSON stored in the content field of the ArticleRevion type of the
-Serlo API to an AsciiDoc document.  This reads the file given as command line
-argument and outputs the result to standard output.
+Serlo API to an AsciiDoc document.  This reads the file, which was provided as
+command line argument, and outputs the result to standard output.
 
 == Bugs
 If you find bugs, please report them at
