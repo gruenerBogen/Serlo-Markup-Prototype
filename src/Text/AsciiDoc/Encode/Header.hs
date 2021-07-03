@@ -31,6 +31,6 @@ encodeRevision (Revision nr date rmk) = text nr
                                      <> maybe empty (\d -> text ", " <> text d) date
                                      <> maybe empty (\r -> text ": " <> text r) rmk
 
-encodeDocumentAttributes :: Attributes -> Doc
+encodeDocumentAttributes :: NamedAttributes -> Doc
 encodeDocumentAttributes = vcat . map encodeAttr
   where encodeAttr (k,v) = char ':' <> text k <> text ": " <> text v

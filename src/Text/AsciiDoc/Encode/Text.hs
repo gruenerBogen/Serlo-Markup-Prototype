@@ -5,6 +5,7 @@ module Text.AsciiDoc.Encode.Text
 
 import Text.PrettyPrint.HughesPJ hiding ((<>))
 
+import Text.AsciiDoc.Types.Generic (Attributes(..))
 import Text.AsciiDoc.Types.Text
 
 encodeFormattedText :: FormattedText -> Doc
@@ -15,7 +16,7 @@ encodeFormattedSegment (FormattedSegment fs s) = foldr applyFormatting (encodeCo
 
 encodeContent :: Content -> Doc
 encodeContent (Text s) = text $ escapeText s
-encodeContent (InlineMacroCall n t pattrs nattrs) =
+encodeContent (InlineMacroCall n t (Attributes pattrs nattrs)) =
   case n of
     "latexmath" -> text "\\(" <> text (maybe "" id $ lookup "src" nattrs) <> text "\\)"
     "asciimath" -> enclose (text "\\$") $ text $ maybe "" id $ lookup "src" nattrs

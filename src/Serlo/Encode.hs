@@ -23,11 +23,11 @@ instance ToBlocks SerloText where
   toBlocks = textToBlocks
 
 textToBlocks :: SerloText -> [Block]
-textToBlocks (Paragraph cs) = (:[]) $ A.Paragraph A.AlignLeft (map toFormattedSegment cs)
+textToBlocks (Paragraph cs) = (:[]) $ A.paragraph (map toFormattedSegment cs)
 
 toFormattedSegment :: TextChild -> FormattedSegment
 toFormattedSegment (Text c ps) = FormattedSegment (map p2p ps) (A.Text c)
-toFormattedSegment (Math src _ _) = FormattedSegment [] (A.InlineMacroCall "latexmath" "" [] [("src", src)])
+toFormattedSegment (Math src _ _) = FormattedSegment [] (A.latexMath src)
 
 p2p :: TextProp -> A.Formatting
 p2p Strong = A.Bold

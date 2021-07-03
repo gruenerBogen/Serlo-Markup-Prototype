@@ -11,4 +11,4 @@ import Text.AsciiDoc.Encode.Block (encodeBlocks)
 
 encodeAsciiDoc :: AsciiDoc -> Doc
 encodeAsciiDoc (AsciiDoc header content) = maybe empty (encodeHeader) header
-                                        <> encodeBlocks content
+                                        <> encodeBlocks content <> char '\n'

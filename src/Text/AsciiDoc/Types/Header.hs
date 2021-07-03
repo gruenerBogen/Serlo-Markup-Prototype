@@ -1,8 +1,8 @@
 module Text.AsciiDoc.Types.Header where
 
-import Text.AsciiDoc.Types.Generic (Attributes)
+import Text.AsciiDoc.Types.Generic (NamedAttributes)
 
-data Header = Header (Maybe Title) (Maybe AuthorRevision) Attributes
+data Header = Header (Maybe Title) (Maybe AuthorRevision) NamedAttributes
             deriving (Eq, Show)
 
 -- TODO: Somehow ensure that at least one author is present

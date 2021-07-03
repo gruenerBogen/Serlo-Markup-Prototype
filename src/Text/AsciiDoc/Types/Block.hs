@@ -1,16 +1,33 @@
 module Text.AsciiDoc.Types.Block where
 
+import Text.AsciiDoc.Types.Generic ( Attributes
+                                   , lookupNamed
+                                   , emptyAttributes
+                                   )
 import Text.AsciiDoc.Types.Text (FormattedText)
 
-data Block = Paragraph Alignment FormattedText
-           | Section Level SectionTitle [Block]
-           deriving (Eq, Show)
+data Block = Block { context :: String
+                   , attributes :: Attributes
+                   , title :: Maybe FormattedText
+                   , content :: BlockContent
+                   } deriving (Eq, Show)
 
-type Level = Int
-type SectionTitle = String
+data BlockContent = Compount [Block]
+                  | Simple FormattedText
+                  -- Currently it is unclear what VerbatimText is.
+                  -- | Verbatim VerbatimText
+                  | Raw RawContent
+                  | Empty
+                  deriving (Eq, Show)
 
-data Alignment = AlignLeft
-               | AlignCenter
-               | AlignRight
-               | AlignJustify
-               deriving (Eq, Show)
+type RawContent = String
+
+type Role = String
+
+-- Some default blocks so that the compiler can check that everything is there
+paragraph :: FormattedText -> Block
+paragraph t = Block { context = "paragraph"
+                    , attributes = emptyAttributes
+                    , title = Nothing
+                    , content = Simple t
+                    }

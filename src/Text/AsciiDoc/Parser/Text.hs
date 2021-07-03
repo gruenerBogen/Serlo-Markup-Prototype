@@ -9,6 +9,10 @@ import Text.Parsec
 import Text.Parsec.Char
 import Text.Parsec.String (Parser)
 
+import Text.AsciiDoc.Types.Generic ( Attributes(..)
+                                   , PositionalAttributes
+                                   , NamedAttributes
+                                   )
 import Text.AsciiDoc.Types.Text
 import Text.AsciiDoc.Parser.Generic (skipWhitespace, p_attributeName)
 
@@ -28,8 +32,8 @@ unconstrainedDelimiters = [ (Bold, "**")
 
 -- start, end, function to convert content to macro call
 macroDelimiters :: [(String, String, String -> Content)]
-macroDelimiters = [ ("\\$", "\\$", \s -> InlineMacroCall "asciimath" "" [] [("src", s)])
-                  , ("\\(", "\\)", \s -> InlineMacroCall "latexmath" "" [] [("src", s)])
+macroDelimiters = [ ("\\$", "\\$", \s -> InlineMacroCall "asciimath" "" (Attributes [] [("src", s)]))
+                  , ("\\(", "\\)", \s -> InlineMacroCall "latexmath" "" (Attributes [] [("src", s)]))
                   ]
 
 p_text :: Parser FormattedText
@@ -83,7 +87,7 @@ p_macroCall = do
   char ':'
   t <- many $ noneOf "[ \n\t\r"
   (pAttr, nAttr) <- between (char '[') (char ']') p_macroAttrs
-  return $ InlineMacroCall n t pAttr nAttr
+  return $ InlineMacroCall n t $ Attributes pAttr nAttr
 
 p_macroAttrs :: Parser (PositionalAttributes, NamedAttributes)
 p_macroAttrs = ((,)) <$> p_posAttrs <*> p_namedAttrs
