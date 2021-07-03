@@ -22,5 +22,8 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 
+# Ignore generated manpages
+*.gz
+
 # Ignore backup files
 *~
