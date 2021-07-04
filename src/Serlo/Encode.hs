@@ -24,6 +24,9 @@ instance ToBlocks SerloText where
 
 textToBlocks :: SerloText -> [Block]
 textToBlocks (Paragraph cs) = (:[]) $ A.paragraph (map toFormattedSegment cs)
+-- Serlo and AsciiDoc count heading levels differently Serlo denotes the title
+-- level with 1 and AsciiDoc with 0.
+textToBlocks (Heading l cs) = (:[]) $ A.section (l-1) (map toFormattedSegment cs) []
 
 toFormattedSegment :: TextChild -> FormattedSegment
 toFormattedSegment (Text c ps) = FormattedSegment (map p2p ps) (A.Text c)

@@ -1,6 +1,6 @@
 module Text.AsciiDoc.Types.Block where
 
-import Text.AsciiDoc.Types.Generic ( Attributes
+import Text.AsciiDoc.Types.Generic ( Attributes(Attributes)
                                    , lookupNamed
                                    , emptyAttributes
                                    )
@@ -31,3 +31,10 @@ paragraph t = Block { context = "paragraph"
                     , title = Nothing
                     , content = Simple t
                     }
+
+section :: Int -> FormattedText -> [Block] -> Block
+section level t c = Block { context = "section"
+                          , attributes = Attributes [] [("level", show level)]
+                          , title = Just t
+                          , content = Compount c
+                          }
