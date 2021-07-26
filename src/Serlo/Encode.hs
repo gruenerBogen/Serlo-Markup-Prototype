@@ -1,5 +1,7 @@
 module Serlo.Encode () where
 
+import Data.String (fromString)
+
 import Serlo.Internal.Model (SerloPlugin(..), SerloContent)
 import Serlo.Internal.Text
 
@@ -18,6 +20,11 @@ instance ToBlocks SerloPlugin where
 pluginToBlocks :: SerloPlugin -> [Block]
 pluginToBlocks (RichText ts) = concat $ map toBlocks ts
 pluginToBlocks (Rows ps) = concat $ map toBlocks ps
+pluginToBlocks (Spoiler t c) = [A.Block { A.context = "spoiler"
+                                        , A.attributes = A.emptyAttributes
+                                        , A.title = Just [fromString t]
+                                        , A.content = A.Compount (pluginToBlocks c)
+                                        }]
 
 instance ToBlocks SerloText where
   toBlocks = textToBlocks
