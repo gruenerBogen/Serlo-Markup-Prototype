@@ -72,6 +72,7 @@ parsing, that is converting the actual document to the internal model. On the
 printing side, the following parts are working:
 
 * document header
+* sections
 * paragraph content (at least some parts)
 
 The printable parts of the paragraph content are
@@ -110,8 +111,9 @@ There need to be two conversions for the internal model. Right now, there is a
 partial implementation to convert the Serlo internal model to the AsciiDoc
 internal model. In that, the following can be converted to AsciiDoc
 
-* Rows
-* Paragraphs (partially, see below)
+* rows
+* paragraphs (partially, see below)
+* spoilers
 
 For paragraphs, the following parts can be converted
 
