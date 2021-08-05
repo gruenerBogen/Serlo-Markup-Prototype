@@ -2,6 +2,9 @@ module Text.AsciiDoc.Encode.Block
   (
     encodeBlock
   , encodeBlocks
+  , encodeBlockWith
+  , encodeBlocksWith
+  , DocumentConfig(..)
   ) where
 
 import Control.Monad.Trans.State ( State
@@ -16,26 +19,45 @@ import Text.PrettyPrint.HughesPJ hiding ((<>))
 import Text.AsciiDoc.Types.Generic ( Attributes(..)
                                    , attributesEmpty
                                    , lookupNamed
+                                   , lookupPositional
+                                   , fromList
                                    )
 import Text.AsciiDoc.Types.Block
 import Text.AsciiDoc.Types.Text (FormattedText)
 import Text.AsciiDoc.Encode.Text (encodeFormattedText)
 
 encodeBlock :: Block -> Doc
-encodeBlock = (flip evalState) initState . blockEncoder
+encodeBlock = encodeBlockWith defaultConfig
+
 
 encodeBlocks :: [Block] -> Doc
-encodeBlocks = (flip evalState) initState . blocksEncoder
+encodeBlocks = encodeBlocksWith defaultConfig
+
+encodeBlockWith :: DocumentConfig -> Block -> Doc
+encodeBlockWith c = (flip evalState) (initState {docConfig = c}) . blockEncoder
+
+encodeBlocksWith :: DocumentConfig -> [Block] -> Doc
+encodeBlocksWith c = (flip evalState) (initState {docConfig = c}) . blocksEncoder
 
 --------------------------------------------------------------------------------
 
+data DocumentConfig = DocumentConfig { contexts :: [(String, String)]
+                                     }
+
+defaultConfig :: DocumentConfig
+defaultConfig = DocumentConfig { contexts = [ ("source", "listing")
+                                            ]
+                               }
+
 data EncoderState = EncoderState { depth :: Int
                                  , sectionLevel :: Int
+                                 , docConfig :: DocumentConfig
                                  }
 
 initState :: EncoderState
 initState = EncoderState { depth = 0
                          , sectionLevel = 0
+                         , docConfig = defaultConfig
                          }
 
 type Encoder a = State EncoderState a
@@ -53,9 +75,7 @@ sectionEncoder b = do
   s <- get
   let level = (maybe ((sectionLevel s)+1) id $ readMaybe =<< (lookupNamed "level" $ attributes b))
   let t = maybe [] id (title b)
-  put $ s { sectionLevel = level }
-  c <- contentEncoder empty b
-  put s
+  let c = evalState (contentEncoder empty b) (s { sectionLevel = level })
   return $ text (take (level + 1) $ repeat '=')
         <> char ' '
     <> encodeFormattedText t
@@ -72,11 +92,10 @@ genericBlockEncoder b = do
   let sepDoc = if (null sep)
                then empty
                else (text sep)
-  put s { depth = (d+2) }
-  c <- contentEncoder sepDoc b
-  put s
+  let c = evalState (contentEncoder sepDoc b) (s { depth = (d+2) })
+  as <- attributes <$> prependContextToAttributes b
   return $ encodeBlockTitle (title b)
-        <> maybeEncodeAttributes (attributes b)
+        <> maybeEncodeAttributes as
         <> c
 
 blocksEncoder :: [Block] -> Encoder Doc
@@ -92,6 +111,20 @@ contentEncoder sep b =
     Empty -> return empty
 
 --------------------------------------------------------------------------------
+
+prependContextToAttributes :: Block -> Encoder Block
+prependContextToAttributes b = do
+  c <- contexts <$> docConfig <$> get
+  let bc = context b
+  if maybe False (bc ==) $ blockStyle b >>= lookupId bc c
+    then return b
+    else return $ b { attributes = fromList [bc] <> attributes b }
+  where lookupId x xs x'
+          | x == x' = Just x'
+          | otherwise = lookup x' xs
+
+blockStyle :: Block -> Maybe String
+blockStyle = lookupPositional 0 . attributes
 
 applySeparator :: Doc -> Doc -> Doc
 applySeparator s

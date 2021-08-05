@@ -7,6 +7,8 @@ module Text.AsciiDoc.Types.Generic
   , lookupNamed
   , attributesEmpty
   , emptyAttributes
+  , fromList
+  , fromAList
   ) where
 
 type NamedAttributes = [(String, String)]
@@ -40,3 +42,15 @@ nth :: Int -> [a] -> Maybe a
 nth _ [] = Nothing
 nth 0 (x:_) = Just x
 nth n (_:xs) = nth (n-1) xs
+
+instance Semigroup Attributes where
+  (Attributes p n) <> (Attributes p' n') = Attributes (p ++ p') (n ++ n')
+
+instance Monoid Attributes where
+  mempty = Attributes [] []
+
+fromList :: [String] -> Attributes
+fromList ps = Attributes ps []
+
+fromAList :: [(String, String)] -> Attributes
+fromAList ns = Attributes [] ns
