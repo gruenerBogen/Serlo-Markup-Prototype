@@ -29,7 +29,6 @@ import Text.AsciiDoc.Encode.Text (encodeFormattedText)
 encodeBlock :: Block -> Doc
 encodeBlock = encodeBlockWith defaultConfig
 
-
 encodeBlocks :: [Block] -> Doc
 encodeBlocks = encodeBlocksWith defaultConfig
 
@@ -41,12 +40,26 @@ encodeBlocksWith c = (flip evalState) (initState {docConfig = c}) . blocksEncode
 
 --------------------------------------------------------------------------------
 
+type Delimiter = String
+
 data DocumentConfig = DocumentConfig { contexts :: [(String, String)]
+                                     , delimiters :: [(String, Delimiter)]
                                      }
 
 defaultConfig :: DocumentConfig
 defaultConfig = DocumentConfig { contexts = [ ("source", "listing")
+                                            , ("example", "admonition")
+                                            , ("verse", "quote")
                                             ]
+                               , delimiters = [ ("paragraph", "")
+                                              , ("admonition", "====")
+                                              , ("listing", "----")
+                                              , ("literal", "....")
+                                              , ("pass", "++++")
+                                              , ("quote", "____")
+                                              , ("sidebar", "****")
+                                              , ("stem", "++++")
+                                              ]
                                }
 
 data EncoderState = EncoderState { depth :: Int
@@ -88,11 +101,8 @@ genericBlockEncoder :: BlockEncoder
 genericBlockEncoder b = do
   s <- get
   let d = depth s
-  let sep = take (d+2) $ repeat '-'
-  let sepDoc = if (null sep)
-               then empty
-               else (text sep)
-  let c = evalState (contentEncoder sepDoc b) (s { depth = (d+2) })
+  del <- blockDelimiter b
+  let c = evalState (contentEncoder del b) (s { depth = (d+2) })
   as <- attributes <$> prependContextToAttributes b
   return $ encodeBlockTitle (title b)
         <> maybeEncodeAttributes as
@@ -114,14 +124,25 @@ contentEncoder sep b =
 
 prependContextToAttributes :: Block -> Encoder Block
 prependContextToAttributes b = do
-  c <- contexts <$> docConfig <$> get
+  config <- docConfig <$> get
+  let c = contexts config
+  let d = delimiters config
   let bc = context b
-  if maybe False (bc ==) $ blockStyle b >>= lookupId bc c
+  if lookup bc d /= Nothing || (maybe False (bc ==) $ blockStyle b >>= lookupId bc c)
     then return b
     else return $ b { attributes = fromList [bc] <> attributes b }
   where lookupId x xs x'
           | x == x' = Just x'
           | otherwise = lookup x' xs
+
+blockDelimiter :: Block -> Encoder Doc
+blockDelimiter b = do
+  s <- get
+  let ds = delimiters $ docConfig $ s
+  let baseDel = maybe "--" id $ lookup (context b) ds
+  case baseDel of
+    "" -> return empty
+    (x:_) -> return $ text $ baseDel ++ (take (depth s) $ repeat x)
 
 blockStyle :: Block -> Maybe String
 blockStyle = lookupPositional 0 . attributes
