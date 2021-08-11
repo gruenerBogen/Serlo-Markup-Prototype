@@ -3,6 +3,7 @@ module Text.AsciiDoc.Types.Block where
 import Text.AsciiDoc.Types.Generic ( Attributes(Attributes)
                                    , lookupNamed
                                    , emptyAttributes
+                                   , fromAList
                                    )
 import Text.AsciiDoc.Types.Text (FormattedText)
 
@@ -38,3 +39,13 @@ section level t c = Block { context = "section"
                           , title = Just t
                           , content = Compount c
                           }
+
+blockMacroCall :: String -> Maybe String -> Attributes -> Block
+blockMacroCall ctx target as = let targetAttr = fromAList $ maybe [] (\t -> [("target", t)]) target
+                               in  Block { context = ctx
+                                         , attributes = targetAttr <> as
+                                         , title = Nothing
+                                         , content = Empty
+                                         }
+
+-- Todo Add macro call with title

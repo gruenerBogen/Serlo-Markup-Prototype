@@ -114,6 +114,7 @@ internal model. In that, the following can be converted to AsciiDoc
 * rows
 * paragraphs (partially, see below)
 * spoilers
+* injections
 
 For paragraphs, the following parts can be converted
 

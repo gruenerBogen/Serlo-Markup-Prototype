@@ -25,6 +25,7 @@ pluginToBlocks (Spoiler t c) = [A.Block { A.context = "spoiler"
                                         , A.title = Just [fromString t]
                                         , A.content = A.Compount (pluginToBlocks c)
                                         }]
+pluginToBlocks (Injection i) = [A.blockMacroCall "injection" (Just $ show i) A.emptyAttributes]
 
 instance ToBlocks SerloText where
   toBlocks = textToBlocks

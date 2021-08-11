@@ -40,6 +40,6 @@ parseRows = fmap Rows . parseJSONList
 
 parseInjection :: Value -> Parser SerloPlugin
 parseInjection = withText "Injection" $ \t ->
-  case (readMaybe . tail . unpack) t of
+  case (readMaybe . unpack) t of
     Just ref -> return $ Injection ref
     Nothing -> fail "Invalid content of injection."
