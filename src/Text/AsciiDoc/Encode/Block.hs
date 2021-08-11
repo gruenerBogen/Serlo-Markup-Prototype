@@ -20,6 +20,7 @@ import Text.AsciiDoc.Types.Generic ( Attributes(..)
                                    , attributesEmpty
                                    , lookupNamed
                                    , lookupPositional
+                                   , filterNamed
                                    , fromList
                                    )
 import Text.AsciiDoc.Types.Block
@@ -76,12 +77,14 @@ initState = EncoderState { depth = 0
 type Encoder a = State EncoderState a
 
 type BlockEncoder = Block -> (Encoder Doc)
+type EncoderForDoc a = a -> (Encoder Doc)
 
 blockEncoder :: BlockEncoder
-blockEncoder b =
-  case context b of
-    "section" -> sectionEncoder b
-    _ -> genericBlockEncoder b
+blockEncoder =
+  selectEncoder genericBlockEncoder
+    [ context === constS "section" --> sectionEncoder
+    , emptyContentS --> macroEncoder
+    ]
 
 sectionEncoder :: BlockEncoder
 sectionEncoder b = do
@@ -107,6 +110,15 @@ genericBlockEncoder b = do
   return $ encodeBlockTitle (title b)
         <> maybeEncodeAttributes as
         <> c
+
+macroEncoder :: BlockEncoder
+macroEncoder b = do
+  let as = attributes b
+  let target = maybe empty text $ lookupNamed "target" as
+  let as' = filterNamed (/= "target") as
+  return $ text (context b) <> text "::"
+        <> target
+        <> encodeAttributes as'
 
 blocksEncoder :: [Block] -> Encoder Doc
 blocksEncoder = fmap (hcat . punctuate (text "\n\n")) . mapM blockEncoder
@@ -166,3 +178,32 @@ encodeBlockTitle = maybe empty (sourround (char '.') (char '\n') . encodeFormatt
 
 sourround :: Doc -> Doc -> Doc -> Doc
 sourround start end mid = start <> mid <> end
+
+--------------------------------------------------------------------------------
+
+type Selector a = (Block -> a)
+
+data EncoderSelector a = EncoderSelector { condition :: Selector Bool
+                                         , encoderForDoc :: EncoderForDoc a
+                                         }
+
+(-->) :: Selector Bool -> EncoderForDoc a -> EncoderSelector a
+c --> e = EncoderSelector { condition = c
+                          , encoderForDoc = e
+                          }
+(===) :: (Eq a) => Selector a -> Selector a -> Selector Bool
+c === c' = \b -> c b == c' b
+
+constS :: a -> Selector a
+constS a = \_ -> a
+
+emptyContentS :: Selector Bool
+emptyContentS b
+  | (content b) == Empty = True
+  | otherwise            = False
+
+selectEncoder :: BlockEncoder -> [EncoderSelector Block] -> BlockEncoder
+selectEncoder defaultEncoder (e:es) = \b -> if condition e b
+                                            then encoderForDoc e b
+                                            else selectEncoder defaultEncoder es b
+selectEncoder defaultEncoder [] = defaultEncoder

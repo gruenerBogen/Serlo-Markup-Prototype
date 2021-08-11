@@ -5,6 +5,7 @@ module Text.AsciiDoc.Types.Generic
   , Attributes(..)
   , lookupPositional
   , lookupNamed
+  , filterNamed
   , attributesEmpty
   , emptyAttributes
   , fromList
@@ -22,6 +23,9 @@ lookupPositional n (Attributes ps _) = nth n ps
 
 lookupNamed :: String -> Attributes -> Maybe String
 lookupNamed s (Attributes _ ns) = lookup s ns
+
+filterNamed :: (String -> Bool) -> Attributes -> Attributes
+filterNamed f (Attributes ps ns) = Attributes ps $ filter (f . fst) ns
 
 attributesEmpty :: Attributes -> Bool
 attributesEmpty (Attributes [] []) = True
