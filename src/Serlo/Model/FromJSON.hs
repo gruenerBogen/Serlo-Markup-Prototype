@@ -31,7 +31,8 @@ pluginFromJSONConstructor name =
     n -> \_ -> fail $ "Plguin '" ++ n ++ "' not implemented."
 
 parseImage :: Value -> Parser SerloPlugin
-parseImage = undefined
+parseImage = withObject "Image" $ \v ->
+  Image <$> unpack `fmap` (v .: "src") <*> unpack `fmap` (v .: "alt")
 
 parseSpoiler :: Value -> Parser SerloPlugin
 parseSpoiler = withObject "Spoiler" $ \v ->
