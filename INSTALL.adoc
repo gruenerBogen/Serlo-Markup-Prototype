@@ -7,7 +7,8 @@ The installation of `serlo2adoc` consists of two steps:
 
 == Clone this repository
 You can use git to clone this repository. There are plenty of instructions on
-how to do this. For example here.
+how to do this. For example
+https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository[here].
 
 The other option is to download
 https://github.com/gruenerBogen/Serlo-Markup-Prototype/archive/refs/heads/main.zip[the
