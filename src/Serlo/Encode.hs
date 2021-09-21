@@ -27,6 +27,11 @@ pluginToBlocks (Spoiler t c) = [A.Block { A.context = "spoiler"
                                         }]
 pluginToBlocks (Injection i) = [A.blockMacroCall "injection" (Just $ show i) A.emptyAttributes]
 pluginToBlocks (Image src alt) = [A.blockMacroCall "image" (Just src) (A.fromAList [("alt", alt)])]
+pluginToBlocks (Important c) = [A.Block { A.context = "important"
+                                        , A.attributes = A.emptyAttributes
+                                        , A.title = Nothing
+                                        , A.content = A.Compount (pluginToBlocks c)
+                                        }]
 
 instance ToBlocks SerloText where
   toBlocks = textToBlocks
