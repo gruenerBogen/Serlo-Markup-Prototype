@@ -30,6 +30,15 @@ roughly contains everything which can be converted.
 
 Installation instructions are provided in link:INSTALL.adoc[INSTALL.adoc].
 
+For downloading articles one can use the helper python scripts in the folder
+link:helper/[`helper`]. They take as argument an article ID and print the
+article's contents to the standard output. The script `fetch-article.py` only
+fetches the article without extracting it's contents from the API
+request. This contains more metadata. The script `fetch-article-content.py`
+only outputs the article's contents. When you redirect the output from the
+latter script, you can feed the file directly into `serlo2adoc` to see a
+conversion of the article to AsciiDoc.
+
 == State of Implementation
 The conversion is done in a three step process: First there is a conversion from
 the JSON created by the Serlo API to an internal representation for the Serlo
