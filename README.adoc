@@ -28,6 +28,8 @@ the library and executable.  To get an impression, on what the programm can
 convert, you can look at the https://de.serlo.org/216333[test article] which
 roughly contains everything which can be converted.
 
+Installation instructions are provided in link:INSTALL.adoc[INSTALL.adoc].
+
 == State of Implementation
 The conversion is done in a three step process: First there is a conversion from
 the JSON created by the Serlo API to an internal representation for the Serlo
@@ -52,6 +54,8 @@ with. These are:
 * injection (only from JSON to internal model)
 * rows
 * spoiler
+* image (only from JSON to internal model)
+* important (only from JSON to internal model)
 
 The text plugin itself is complicated enough to deserve its own treatment: The
 text plugin itself has a substructure which denotes the text
@@ -115,6 +119,8 @@ internal model. In that, the following can be converted to AsciiDoc
 * paragraphs (partially, see below)
 * spoilers
 * injections
+* images
+* important
 
 For paragraphs, the following parts can be converted
 

@@ -1,0 +1,31 @@
+= Installation instructions
+
+The installation of `serlo2adoc` consists of two steps:
+
+. Clone this repository.
+. Build and install `serlo2adoc`
+
+== Clone this repository
+You can use git to clone this repository. There are plenty of instructions on
+how to do this. For example here.
+
+The other option is to download
+https://github.com/gruenerBogen/Serlo-Markup-Prototype/archive/refs/heads/main.zip[the
+repository as a ZIP] file. Then you need to unpack it.
+
+== Build and Install
+Building instructions may vary depending on your operating system. The
+following instructions were tested on Linux.
+The program `serlo2adoc` can be build using Haskell's package manager
+https://www.haskell.org/cabal/[cabal]. After installing cabal, open a terminal
+in the folder containing your local copy of this repository and enter the
+following command
+
+[source]
+cabal install --installdir <preferred install location>
+
+Replace <preferred install location> with your preferred install
+location. This should be a location where your terminal searches for
+executables. Common global (meaning the executable is available to all users)
+locations are `/bin`, `/usr/bin`, and `/usr/local/bin`. A common local (i.e. the
+executable is only available to a specific user) location is `~/bin`.
