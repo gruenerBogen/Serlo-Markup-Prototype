@@ -28,6 +28,7 @@ pluginFromJSONConstructor name =
     "spoiler" -> parseSpoiler
     "rows" -> parseRows
     "injection" -> parseInjection
+    "important" -> parseImportant
     n -> \_ -> fail $ "Plguin '" ++ n ++ "' not implemented."
 
 parseImage :: Value -> Parser SerloPlugin
@@ -46,6 +47,9 @@ parseInjection = withText "Injection" $ \t ->
   case (readMaybe . unpack) t of
     Just ref -> return $ Injection ref
     Nothing -> fail "Invalid content of injection."
+
+parseImportant :: Value -> Parser SerloPlugin
+parseImportant v = Important <$> pluginFromJSON v
 
 parseArticleContent :: Value -> Parser Value
 parseArticleContent = withObject "Article" $ \v ->

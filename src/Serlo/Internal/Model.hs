@@ -12,6 +12,7 @@ data SerloPlugin = RichText [SerloText] -- contnet
                  | Spoiler String SerloPlugin -- title content
                  | Rows [SerloPlugin]
                  | Injection Int -- id
+                 | Important SerloPlugin
 --                 | Article SerloPlugin SerloPlugin [Int] ExerciseFolder RelatedContent [String]
 --                 -- introduction content exercises exerciseFolder relatedContent sources
 --                 | ArticleIntroduction SerloPlugin SerloPlugin Bool Int -- explanation multimedia illustrating width
@@ -28,5 +29,6 @@ name (Rows _) = "rows"
 name (Spoiler _ _) = "spoiler"
 name (Injection _) = "injection"
 name (Image _ _) = "image"
+name (Important _) = "important"
 --name (Article _ _ _ _ _ _) = "article")
 --name (ArticleIntroduction _ _ _ _) = "articleIntroduction"
