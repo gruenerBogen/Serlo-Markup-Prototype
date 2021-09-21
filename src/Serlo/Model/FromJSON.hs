@@ -16,7 +16,9 @@ pluginFromJSON :: Value -> Parser SerloPlugin
 pluginFromJSON = withObject "SerloPlugin" $ \v -> do
   n <- v .: "plugin" :: Parser Text
   s <- v .: "state" :: Parser Value
-  pluginFromJSONConstructor n s
+  case n of
+    "article" -> parseArticleContent s >>= pluginFromJSON
+    _         -> pluginFromJSONConstructor n s
 
 pluginFromJSONConstructor :: Text -> Value -> Parser SerloPlugin
 pluginFromJSONConstructor name =
@@ -43,3 +45,7 @@ parseInjection = withText "Injection" $ \t ->
   case (readMaybe . unpack) t of
     Just ref -> return $ Injection ref
     Nothing -> fail "Invalid content of injection."
+
+parseArticleContent :: Value -> Parser Value
+parseArticleContent = withObject "Article" $ \v ->
+  parseJSON =<< (v .: "content")
